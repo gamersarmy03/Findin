@@ -99,12 +99,10 @@ async function search(query, page, type) {
         const searchTime = ((endTime - startTime) / 1000).toFixed(2);
         displayResults(data, type, searchTime);
         setupPagination(data, query, type);
-        document.getElementById('filter-bar').style.display = 'flex';
     } catch (error) {
         console.error('Error fetching search results:', error);
         document.getElementById('results').innerHTML = '<p>Error fetching results. Please try again.</p>';
         document.getElementById('results-info').innerHTML = '';
-        document.getElementById('filter-bar').style.display = 'flex';
     }
 }
 
