@@ -172,6 +172,4 @@ function displayResults(data, type, searchTime) {
                 `;
                 resultsDiv.appendChild(resultItem);
             });
-        } else if (type === 'videos') {
-            data.items.forEach(item => {
 
