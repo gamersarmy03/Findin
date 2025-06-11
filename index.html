@@ -3,22 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Findin - Search Engine</title>
+    <title>Nova - Search Engine</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Findin</h1>
-            <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search the web..." autocomplete="off">
-                <button id="search-button">Search</button>
-            </div>
-            <div id="suggestions" class="suggestions"></div>
-            <div class="filter-bar">
-                <button class="filter-button active" data-type="sites">Sites</button>
-                <button class="filter-button" data-type="images">Images</button>
-                <button class="filter-button" data-type="videos">Videos</button>
+            <img src="brand.png" alt="Nova Logo" class="logo">
+            <div class="search-container">
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Search the web..." autocomplete="off">
+                    <button id="search-button">Search</button>
+                </div>
+                <div id="suggestions" class="suggestions"></div>
+                <div class="filter-bar">
+                    <button class="filter-button active" data-type="sites">Sites</button>
+                    <button class="filter-button" data-type="images">Images</button>
+                    <button class="filter-button" data-type="videos">Videos</button>
+                </div>
             </div>
         </header>
         <main>
@@ -27,7 +29,7 @@
             <div id="pagination" class="pagination"></div>
         </main>
         <footer>
-            <p>© 2025 Findin. All rights reserved.</p>
+            <p>© 2025 Nova. All rights reserved.</p>
         </footer>
     </div>
     <script src="script.js"></script>
