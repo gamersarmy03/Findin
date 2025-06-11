@@ -7,13 +7,6 @@ let currentPage = 1;
 let currentType = 'sites';
 const resultsPerPage = 10;
 
-// Fetch news on page load
-document.addEventListener('DOMContentLoaded', () => {
-    fetchNews('tech', 'tech-news');
-    fetchNews('sports', 'sports-news');
-    fetchNews('entertainment', 'entertainment-news');
-});
-
 document.getElementById('search-button').addEventListener('click', () => {
     const query = document.getElementById('search-input').value;
     if (query) {
@@ -88,39 +81,6 @@ function displaySuggestions(suggestions) {
     }
 }
 
-async function fetchNews(category, elementId) {
-    const query = `${category} news`;
-    const url = `${SEARCH_API}?key=${API_KEY}&cx=${CX}&q=${encodeURIComponent(query)}&num=3`;
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        displayNews(data, elementId);
-    } catch (error) {
-        console.error(`Error fetching ${category} news:`, error);
-        document.getElementById(elementId).innerHTML = '<p>Unable to load news.</p>';
-    }
-}
-
-function displayNews(data, elementId) {
-    const newsDiv = document.getElementById(elementId);
-    newsDiv.innerHTML = '';
-    if (data.items && data.items.length > 0) {
-        data.items.forEach(item => {
-            const newsItem = document.createElement('div');
-            newsItem.className = 'news-item';
-            const thumbnail = item.pagemap?.cse_thumbnail?.[0]?.src || '';
-            newsItem.innerHTML = `
-                ${thumbnail ? `<img src="${thumbnail}" alt="${item.title || 'News'}" class="news-thumbnail">` : ''}
-                <h4><a href="${item.link}" target="_blank">${item.title}</a></h4>
-                <p>${item.snippet}</p>
-            `;
-            newsDiv.appendChild(newsItem);
-        });
-    } else {
-        newsDiv.innerHTML = '<p>No news available.</p>';
-    }
-}
-
 async function search(query, page, type) {
     const start = (page - 1) * resultsPerPage + 1;
     let url = `${SEARCH_API}?key=${API_KEY}&cx=${CX}&q=${encodeURIComponent(query)}&start=${start}`;
@@ -140,15 +100,11 @@ async function search(query, page, type) {
         displayResults(data, type, searchTime);
         setupPagination(data, query, type);
         document.getElementById('filter-bar').style.display = 'flex';
-        document.getElementById('results-info').style.display = 'block';
-        document.getElementById('home-news').style.display = 'none';
     } catch (error) {
         console.error('Error fetching search results:', error);
         document.getElementById('results').innerHTML = '<p>Error fetching results. Please try again.</p>';
         document.getElementById('results-info').innerHTML = '';
         document.getElementById('filter-bar').style.display = 'flex';
-        document.getElementById('results-info').style.display = 'block';
-        document.getElementById('home-news').style.display = 'none';
     }
 }
 
