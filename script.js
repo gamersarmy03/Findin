@@ -174,31 +174,4 @@ function displayResults(data, type, searchTime) {
             });
         } else if (type === 'videos') {
             data.items.forEach(item => {
- ...
 
-### Changes Made:
-1. **index.html**:
-   - Added a `home-news` section with categories for Tech, Sports, and Entertainment, each with a container for news items.
-   - Added `style="display: none;"` to `results-info` to hide it on the home screen.
-2. **styles.css**:
-   - **Header**: Changed `flex-direction: column` and `align-items: flex-start` to place the search bar below the logo.
-   - **Footer**: Added `margin-top: auto` to the container and adjusted footer padding to ensure it sticks to the bottom.
-   - **News Section**: Added styles for `.home-news`, `.news-category`, `.news-items`, and `.news-item` with a clean, card-based layout and hover effects.
-   - Maintained the black-themed color scheme (#000000 background, #1a73e8 accents).
-3. **script.js**:
-   - Fixed filter bar visibility by ensuring `document.getElementById('filter-bar').style.display = 'flex'` in the `search` function.
-   - Added `fetchNews` and `displayNews` functions to fetch and display 3 news items per category (Tech, Sports, Entertainment) on page load.
-   - Hid the `home-news` section and showed `results-info` after a search using `style.display`.
-   - Corrected a typo in `SUGGEST_API` URL (`client=firefox=q=` to `client=firefox&q=`).
-
-### Instructions:
-- Replace your existing `index.html`, `styles.css`, and `script.js` with the updated versions.
-- Ensure `brand.png` is in the same directory (~150x40px recommended).
-- Open `index.html` in a browser to see:
-  - The logo at the top left with the search bar below it.
-  - A home screen with Tech, Sports, and Entertainment news sections.
-  - Filter buttons and results info appearing only after a search.
-  - The footer at the bottom of the screen.
-- Verify the API key and CX ID via [Google Cloud Console](https://console.cloud.google.com/).
-
-If you want specific tweaks (e.g., more news categories, different styling, or fixing specific UI issues), please let me know!
