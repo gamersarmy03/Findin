@@ -94,6 +94,7 @@ async function fetchNews(category, elementId) {
     try {
         const response = await fetch(url);
         const data = await response.json();
+        console.log(`News response for ${category}:`, data); // Debug: Log news response
         displayNews(data, elementId);
     } catch (error) {
         console.error(`Error fetching ${category} news:`, error);
@@ -128,9 +129,10 @@ async function search(query, page, type) {
     if (type === 'images') {
         url += '&searchType=image';
     } else if (type === 'videos') {
-        url += '&q=site:youtube.com ' + encodeURIComponent(query);
+        url += `&q=${encodeURIComponent('site:youtube.com ' + query)}`;
     }
 
+    console.log('Search URL:', url); // Debug: Log API URL
     try {
         const startTime = performance.now();
         const response = await fetch(url);
@@ -140,7 +142,8 @@ async function search(query, page, type) {
         const data = await response.json();
         const endTime = performance.now();
         const searchTime = ((endTime - startTime) / 1000).toFixed(2);
-        console.log('Search response:', data); // Debug: Log API response
+        console.log('Search response:', data); // Debug: Log full response
+        console.log('Items:', data.items); // Debug: Log items specifically
         displayResults(data, type, searchTime);
         setupPagination(data, query, type);
         document.getElementById('filter-bar').style.display = 'flex';
@@ -206,7 +209,7 @@ function displayResults(data, type, searchTime) {
                 resultItem.className = 'result-item';
                 resultItem.innerHTML = `
                     <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
-                    <a href="${item.link}" target="_blank">${item.displayLink}</a>
+                    <a href="${item.link}" target="_blank">${item.displayLink || item.link}</a>
                     <p>${item.snippet}</p>
                 `;
                 resultsDiv.appendChild(resultItem);
@@ -214,7 +217,7 @@ function displayResults(data, type, searchTime) {
         }
     } else {
         console.warn('No items found in response:', data);
-        resultsDiv.innerHTML = '<p>No results found.</p>';
+        resultsDiv.innerHTML = '<p>No results found. Try a different query or check API settings.</p>';
     }
 }
 
