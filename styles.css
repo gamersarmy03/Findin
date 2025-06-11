@@ -2,8 +2,8 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Helvetica Neue', Arial, sans-serif;
-    background-color: #f5f5f5;
-    color: #333333;
+    background-color: #000000;
+    color: #e0e0e0;
     display: flex;
     justify-content: center;
     min-height: 100vh;
@@ -38,17 +38,17 @@ h1 {
     max-width: 600px;
     padding: 12px 16px;
     font-size: 16px;
-    border: 1px solid #dadce0;
+    border: 1px solid #3c4043;
     border-radius: 4px;
-    background-color: #ffffff;
-    color: #333333;
+    background-color: #202124;
+    color: #e0e0e0;
     outline: none;
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 #search-input:focus {
     border-color: #1a73e8;
-    box-shadow: 0 1px 6px rgba(26, 115, 232, 0.2);
+    box-shadow: 0 1px 6px rgba(26, 115, 232, 0.3);
 }
 
 #search-button {
@@ -70,22 +70,22 @@ h1 {
     position: absolute;
     width: 70%;
     max-width: 600px;
-    background-color: #ffffff;
-    border: 1px solid #dadce0;
+    background-color: #202124;
+    border: 1px solid #3c4043;
     border-radius: 4px;
     margin-top: 5px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     display: none;
 }
 
 .suggestion-item {
     padding: 12px 16px;
     cursor: pointer;
-    color: #333333;
+    color: #e0e0e0;
 }
 
 .suggestion-item:hover {
-    background-color: #f1f3f4;
+    background-color: #303134;
 }
 
 #results {
@@ -93,23 +93,23 @@ h1 {
 }
 
 .result-item {
-    background-color: #ffffff;
+    background-color: #202124;
     padding: 16px;
     margin-bottom: 16px;
     border-radius: 4px;
-    border: 1px solid #dadce0;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid #3c4043;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .result-item h3 {
     margin: 0 0 8px;
     font-size: 18px;
-    color: #1a0dab;
+    color: #8ab4f8;
     font-weight: 500;
 }
 
 .result-item a {
-    color: #006621;
+    color: #8ab4f8;
     text-decoration: none;
     font-size: 14px;
 }
@@ -120,7 +120,7 @@ h1 {
 
 .result-item p {
     margin: 8px 0 0;
-    color: #4d5156;
+    color: #bdc1c6;
     font-size: 14px;
     line-height: 1.5;
 }
@@ -148,7 +148,7 @@ h1 {
 }
 
 .pagination button:disabled {
-    background-color: #dadce0;
+    background-color: #3c4043;
     color: #80868b;
     cursor: not-allowed;
 }
@@ -156,6 +156,6 @@ h1 {
 footer {
     text-align: center;
     margin-top: 40px;
-    color: #5f6368;
+    color: #80868b;
     font-size: 14px;
 }
