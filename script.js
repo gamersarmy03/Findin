@@ -1,7 +1,7 @@
 const API_KEY = 'AIzaSyAsC26etChOJbWDfbmzgJf6MuOwyuCWNQw';
 const CX = 'b62679164034f475d';
 const SEARCH_API = 'https://www.googleapis.com/customsearch/v1';
-const SUGGEST_API = 'https://suggestqueries.google.com/complete/search?client=firefox=q=';
+const SUGGEST_API = 'https://suggestqueries.google.com/complete/search?client=firefox&q=';
 
 let currentPage = 1;
 let currentType = 'sites';
@@ -108,8 +108,10 @@ function displayNews(data, elementId) {
         data.items.forEach(item => {
             const newsItem = document.createElement('div');
             newsItem.className = 'news-item';
+            const thumbnail = item.pagemap?.cse_thumbnail?.[0]?.src || '';
             newsItem.innerHTML = `
-                <a href="${item.link}" target="_blank">${item.title}</a>
+                ${thumbnail ? `<img src="${thumbnail}" alt="${item.title || 'News'}" class="news-thumbnail">` : ''}
+                <h4><a href="${item.link}" target="_blank">${item.title}</a></h4>
                 <p>${item.snippet}</p>
             `;
             newsDiv.appendChild(newsItem);
@@ -172,4 +174,64 @@ function displayResults(data, type, searchTime) {
                 `;
                 resultsDiv.appendChild(resultItem);
             });
+        } else if (type === 'videos') {
+            data.items.forEach(item => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'video-result';
+                resultItem.innerHTML = `
+                    <a href="${item.link}" target="_blank">
+                        <img src="${item.pagemap?.cse_thumbnail?.[0]?.src || ''}" alt="${item.title || 'Video'}">
+                    </a>
+                    <div>
+                        <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
+                        <p>${item.snippet}</p>
+                    </div>
+                `;
+                resultsDiv.appendChild(resultItem);
+            });
+        } else {
+            data.items.forEach(item => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+                resultItem.innerHTML = `
+                    <h3>${item.title}</h3>
+                    <a href="${item.link}" target="_blank">${item.link}</a>
+                    <p>${item.snippet}</p>
+                `;
+                resultsDiv.appendChild(resultItem);
+            });
+        }
+    } else {
+        resultsDiv.innerHTML = '<p>No results found.</p>';
+        resultsInfoDiv.innerHTML = `0 results (${searchTime} seconds)`;
+    }
+}
 
+function setupPagination(data, query, type) {
+    const paginationDiv = document.getElementById('pagination');
+    paginationDiv.innerHTML = '';
+    const totalResults = parseInt(data.queries.request[0].totalResults);
+    const totalPages = Math.ceil(totalResults / resultsPerPage);
+
+    if (totalPages > 1) {
+        if (currentPage > 1) {
+            const prevButton = document.createElement('button');
+            prevButton.textContent = 'Previous';
+            prevButton.addEventListener('click', () => {
+                currentPage--;
+                search(query, currentPage, type);
+            });
+            paginationDiv.appendChild(prevButton);
+        }
+
+        if (currentPage < totalPages) {
+            const nextButton = document.createElement('button');
+            nextButton.textContent = 'Next';
+            nextButton.addEventListener('click', () => {
+                currentPage++;
+                search(query, currentPage, type);
+            });
+            paginationDiv.appendChild(nextButton);
+        }
+    }
+}
