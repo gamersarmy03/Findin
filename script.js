@@ -94,7 +94,6 @@ async function fetchNews(category, elementId) {
     try {
         const response = await fetch(url);
         const data = await response.json();
-        console.log(`News response for ${category}:`, data); // Debug: Log news response
         displayNews(data, elementId);
     } catch (error) {
         console.error(`Error fetching ${category} news:`, error);
@@ -124,26 +123,20 @@ function displayNews(data, elementId) {
 
 async function search(query, page, type) {
     const start = (page - 1) * resultsPerPage + 1;
-    let url = `${SEARCH_API}?key=${API_KEY}&cx=${CX}&q=${encodeURIComponent(query)}&start=${start}&num=${resultsPerPage}`;
+    let url = `${SEARCH_API}?key=${API_KEY}&cx=${CX}&q=${encodeURIComponent(query)}&start=${start}`;
     
     if (type === 'images') {
         url += '&searchType=image';
     } else if (type === 'videos') {
-        url += `&q=${encodeURIComponent('site:youtube.com ' + query)}`;
+        url += '&q=site:youtube.com';
     }
 
-    console.log('Search URL:', url); // Debug: Log API URL
     try {
         const startTime = performance.now();
         const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
         const data = await response.json();
         const endTime = performance.now();
         const searchTime = ((endTime - startTime) / 1000).toFixed(2);
-        console.log('Search response:', data); // Debug: Log full response
-        console.log('Items:', data.items); // Debug: Log items specifically
         displayResults(data, type, searchTime);
         setupPagination(data, query, type);
         document.getElementById('filter-bar').style.display = 'flex';
@@ -164,27 +157,20 @@ function displayResults(data, type, searchTime) {
     const resultsInfoDiv = document.getElementById('results-info');
     resultsDiv.innerHTML = '';
     resultsInfoDiv.innerHTML = '';
-
-    if (!data || !data.queries || !data.queries.request) {
-        console.error('Invalid API response structure:', data);
-        resultsDiv.innerHTML = '<p>Error: Invalid response from server.</p>';
-        resultsInfoDiv.innerHTML = `0 results (${searchTime} seconds)`;
-        return;
-    }
-
-    const totalResults = parseInt(data.queries.request[0].totalResults) || 0;
-    resultsInfoDiv.innerHTML = `About ${totalResults.toLocaleString()} results (${searchTime} seconds)`;
-
+    
     if (data.items && data.items.length > 0) {
+        const totalResults = parseInt(data.queries.request[0].totalResults);
+        resultsInfoDiv.innerHTML = `About ${totalResults.toLocaleString()} results (${searchTime} seconds)`;
+        
         if (type === 'images') {
             data.items.forEach(item => {
                 const resultItem = document.createElement('div');
                 resultItem.className = 'image-result';
                 resultItem.innerHTML = `
                     <a href="${item.link}" target="_blank">
-                        <img src="${item.link}" alt="${item.title || 'Image'}" onerror="this.src='#'">
+                        <img src="${item.link}" alt="${item.title || 'Image'}">
                     </a>
-                    <p><a href="${item.image?.contextLink || item.link}" target="_blank">${item.title || 'View source'}</a></p>
+                    <p><a href="${item.image.contextLink}" target="_blank">${item.title || 'View source'}</a></p>
                 `;
                 resultsDiv.appendChild(resultItem);
             });
@@ -208,23 +194,23 @@ function displayResults(data, type, searchTime) {
                 const resultItem = document.createElement('div');
                 resultItem.className = 'result-item';
                 resultItem.innerHTML = `
-                    <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
-                    <a href="${item.link}" target="_blank">${item.displayLink || item.link}</a>
+                    <h3>${item.title}</h3>
+                    <a href="${item.link}" target="_blank">${item.link}</a>
                     <p>${item.snippet}</p>
                 `;
                 resultsDiv.appendChild(resultItem);
             });
         }
     } else {
-        console.warn('No items found in response:', data);
-        resultsDiv.innerHTML = '<p>No results found. Try a different query or check API settings.</p>';
+        resultsDiv.innerHTML = '<p>No results found.</p>';
+        resultsInfoDiv.innerHTML = `0 results (${searchTime} seconds)`;
     }
 }
 
 function setupPagination(data, query, type) {
     const paginationDiv = document.getElementById('pagination');
     paginationDiv.innerHTML = '';
-    const totalResults = parseInt(data.queries.request[0].totalResults) || 0;
+    const totalResults = parseInt(data.queries.request[0].totalResults);
     const totalPages = Math.ceil(totalResults / resultsPerPage);
 
     if (totalPages > 1) {
