@@ -1,5 +1,5 @@
 const API_KEY = 'AIzaSyAsC26etChOJbWDfbmzgJf6MuOwyuCWNQw';
-const CX = 'YOUR_CX_ID'; // Replace with your Custom Search Engine ID
+const CX = 'b62679164034f475d'; // Replace with your Custom Search Engine ID
 const SEARCH_API = 'https://www.googleapis.com/customsearch/v1';
 const SUGGEST_API = 'https://suggestqueries.google.com/complete/search?client=firefox&q=';
 
