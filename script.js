@@ -1,4 +1,4 @@
-const API_KEY = 'AIzaSyAsC26etChOJbWDfbmzgJf6MuOwyuCWNQw';
+const API_KEY = 'AIzaSyAgfVERAJvUGMY2hXycbYhL_eEFiuk1G-g';
 const CX = 'b62679164034f475d';
 const SEARCH_API = 'https://www.googleapis.com/customsearch/v1';
 const SUGGEST_API = 'https://suggestqueries.google.com/complete/search?client=firefox&q=';
