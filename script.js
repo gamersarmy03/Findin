@@ -7,6 +7,13 @@ let currentPage = 1;
 let currentType = 'sites';
 const resultsPerPage = 10;
 
+// Fetch news on page load
+document.addEventListener('DOMContentLoaded', () => {
+    fetchNews('tech', 'tech-news');
+    fetchNews('sports', 'sports-news');
+    fetchNews('entertainment', 'entertainment-news');
+});
+
 document.getElementById('search-button').addEventListener('click', () => {
     const query = document.getElementById('search-input').value;
     if (query) {
@@ -81,6 +88,43 @@ function displaySuggestions(suggestions) {
     }
 }
 
+async function fetchNews(category, elementId) {
+    const query = `${category} news`;
+    const url = `${SEARCH_API}?key=${API_KEY}&cx=${CX}&q=${encodeURIComponent(query)}&num=3`;
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log(`News response for ${category}:`, data); // Debug: Log news response
+        displayNews(data, elementId);
+    } catch (error) {
+        console.error(`Error fetching ${category} news:`, error);
+        document.getElementById(elementId).innerHTML = '<p>Unable to load news. Check API key or quota.</p>';
+    }
+}
+
+function displayNews(data, elementId) {
+    const newsDiv = document.getElementById(elementId);
+    newsDiv.innerHTML = '';
+    if (data.items && data.items.length > 0) {
+        data.items.forEach(item => {
+            const newsItem = document.createElement('div');
+            newsItem.className = 'news-item';
+            const thumbnail = item.pagemap?.cse_thumbnail?.[0]?.src || '';
+            newsItem.innerHTML = `
+                ${thumbnail ? `<img src="${thumbnail}" alt="${item.title || 'News'}" class="news-thumbnail">` : ''}
+                <h4><a href="${item.link}" target="_blank">${item.title}</a></h4>
+                <p>${item.snippet}</p>
+            `;
+            newsDiv.appendChild(newsItem);
+        });
+    } else {
+        newsDiv.innerHTML = '<p>No news available.</p>';
+    }
+}
+
 async function search(query, page, type) {
     const start = (page - 1) * resultsPerPage + 1;
     let url = `${SEARCH_API}?key=${API_KEY}&cx=${CX}&q=${encodeURIComponent(query)}&start=${start}`;
@@ -91,20 +135,30 @@ async function search(query, page, type) {
         url += '&q=site:youtube.com';
     }
 
+    console.log('Search URL:', url); // Debug: Log API URL
     try {
         const startTime = performance.now();
         const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
         const data = await response.json();
         const endTime = performance.now();
         const searchTime = ((endTime - startTime) / 1000).toFixed(2);
+        console.log('Search response:', data); // Debug: Log full response
+        console.log('Items:', data.items); // Debug: Log items specifically
         displayResults(data, type, searchTime);
         setupPagination(data, query, type);
         document.getElementById('filter-bar').style.display = 'flex';
+        document.getElementById('results-info').style.display = 'block';
+        document.getElementById('home-news').style.display = 'none';
     } catch (error) {
         console.error('Error fetching search results:', error);
-        document.getElementById('results').innerHTML = '<p>Error fetching results. Please try again.</p>';
+        document.getElementById('results').innerHTML = '<p>Error fetching results. Check API key or quota.</p>';
         document.getElementById('results-info').innerHTML = '';
         document.getElementById('filter-bar').style.display = 'flex';
+        document.getElementById('results-info').style.display = 'block';
+        document.getElementById('home-news').style.display = 'none';
     }
 }
 
@@ -113,11 +167,18 @@ function displayResults(data, type, searchTime) {
     const resultsInfoDiv = document.getElementById('results-info');
     resultsDiv.innerHTML = '';
     resultsInfoDiv.innerHTML = '';
-    
+
+    if (!data || !data.queries || !data.queries.request) {
+        console.error('Invalid API response structure:', data);
+        resultsDiv.innerHTML = '<p>Error: Invalid response from server.</p>';
+        resultsInfoDiv.innerHTML = `0 results (${searchTime} seconds)`;
+        return;
+    }
+
+    const totalResults = parseInt(data.queries.request[0].totalResults) || 0;
+    resultsInfoDiv.innerHTML = `About ${totalResults.toLocaleString()} results (${searchTime} seconds)`;
+
     if (data.items && data.items.length > 0) {
-        const totalResults = parseInt(data.queries.request[0].totalResults);
-        resultsInfoDiv.innerHTML = `About ${totalResults.toLocaleString()} results (${searchTime} seconds)`;
-        
         if (type === 'images') {
             data.items.forEach(item => {
                 const resultItem = document.createElement('div');
@@ -126,7 +187,7 @@ function displayResults(data, type, searchTime) {
                     <a href="${item.link}" target="_blank">
                         <img src="${item.link}" alt="${item.title || 'Image'}">
                     </a>
-                    <p><a href="${item.image.contextLink}" target="_blank">${item.title || 'View source'}</a></p>
+                    <p><a href="${item.image?.contextLink || item.link}" target="_blank">${item.title || 'View source'}</a></p>
                 `;
                 resultsDiv.appendChild(resultItem);
             });
@@ -158,15 +219,15 @@ function displayResults(data, type, searchTime) {
             });
         }
     } else {
-        resultsDiv.innerHTML = '<p>No results found.</p>';
-        resultsInfoDiv.innerHTML = `0 results (${searchTime} seconds)`;
+        console.warn('No items found in response:', data);
+        resultsDiv.innerHTML = '<p>No results found. Try a different query or check API settings.</p>';
     }
 }
 
 function setupPagination(data, query, type) {
     const paginationDiv = document.getElementById('pagination');
     paginationDiv.innerHTML = '';
-    const totalResults = parseInt(data.queries.request[0].totalResults);
+    const totalResults = parseInt(data.queries.request[0].totalResults) || 0;
     const totalPages = Math.ceil(totalResults / resultsPerPage);
 
     if (totalPages > 1) {
