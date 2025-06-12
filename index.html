@@ -13,10 +13,15 @@
             <div class="search-container">
                 <div class="search-bar">
                     <input type="text" id="search-input" placeholder="Search the web..." autocomplete="off">
-                    <button id="search-button">Search</button>
+                    <button id="search-button">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
                 </div>
                 <div id="suggestions" class="suggestions"></div>
-                <div class="filter-bar">
+                <div class="filter-bar" id="filter-bar" style="display: none;">
                     <button class="filter-button active" data-type="sites">Sites</button>
                     <button class="filter-button" data-type="images">Images</button>
                     <button class="filter-button" data-type="videos">Videos</button>
@@ -24,7 +29,22 @@
             </div>
         </header>
         <main>
-            <div id="results-info"></div>
+            <div id="home-news" class="home-news">
+                <h2>Latest News</h2>
+                <div class="news-category">
+                    <h3>Tech</h3>
+                    <div id="tech-news" class="news-items"></div>
+                </div>
+                <div class="news-category">
+                    <h3>Sports</h3>
+                    <div id="sports-news" class="news-items"></div>
+                </div>
+                <div class="news-category">
+                    <h3>Entertainment</h3>
+                    <div id="entertainment-news" class="news-items"></div>
+                </div>
+            </div>
+            <div id="results-info" style="display: none;"></div>
             <div id="results"></div>
             <div id="pagination" class="pagination"></div>
         </main>
