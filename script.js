@@ -9,23 +9,23 @@ const resultsPerPage = 10;
 
 // Function to check if the input is a valid URL
 function isValidUrl(string) {
-    // Regular expression for URL detection (supports domains with or without protocol)
     const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-./?%&=]*)?$/i;
     return urlPattern.test(string);
 }
 
-// Function to normalize and redirect to the URL
+// Function to normalize and redirect to the URL in the same tab
 function redirectToUrl(input) {
     let url = input.trim();
     // Add https:// if no protocol is specified
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
         url = 'https://' + url;
     }
-    // Redirect to the URL
-    window.location.href = url;
+    // Ensure redirect happens in the same tab with browser UI visible
+    window.location.href = url; // Using href to ensure standard navigation
 }
 
-document.getElementById('search-button').addEventListener('click', () => {
+document.getElementById('search-button').addEventListener('click', (e) => {
+    e.preventDefault(); // Prevent any default behavior that might interfere
     const query = document.getElementById('search-input').value.trim();
     if (query) {
         if (isValidUrl(query)) {
@@ -49,6 +49,7 @@ document.getElementById('search-input').addEventListener('input', async (e) => {
 
 document.getElementById('search-input').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
+        e.preventDefault(); // Prevent form submission or other default behavior
         const query = document.getElementById('search-input').value.trim();
         if (query) {
             if (isValidUrl(query)) {
@@ -121,7 +122,7 @@ async function search(query, page, type) {
         url += '&q=site:youtube.com';
     }
 
-    console.log('Search URL:', url); // Debug: Log API URL
+    console.log('Search URL:', url);
     try {
         const startTime = performance.now();
         const response = await fetch(url);
@@ -131,8 +132,8 @@ async function search(query, page, type) {
         const data = await response.json();
         const endTime = performance.now();
         const searchTime = ((endTime - startTime) / 1000).toFixed(2);
-        console.log('Search response:', data); // Debug: Log full response
-        console.log('Items:', data.items); // Debug: Log items specifically
+        console.log('Search response:', data);
+        console.log('Items:', data.items);
         displayResults(data, type, searchTime);
         setupPagination(data, query, type);
         document.getElementById('filter-bar').style.display = 'flex';
