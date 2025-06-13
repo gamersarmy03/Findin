@@ -13,26 +13,34 @@ function isValidUrl(string) {
     return urlPattern.test(string);
 }
 
-// Function to normalize and redirect to the URL in the same tab
-function redirectToUrl(input) {
+// Function to normalize and display the URL in an iframe
+function displayUrlInIframe(input) {
     let url = input.trim();
     // Add https:// if no protocol is specified
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
         url = 'https://' + url;
     }
-    // Ensure redirect happens in the same tab with browser UI visible
-    window.location.href = url; // Using href to ensure standard navigation
+    // Display the URL in the iframe
+    const iframe = document.getElementById('website-iframe');
+    iframe.src = url;
+    iframe.style.display = 'block';
+    // Hide search results and pagination
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('results-info').style.display = 'none';
+    document.getElementById('pagination').style.display = 'none';
+    document.getElementById('filter-bar').style.display = 'none';
 }
 
 document.getElementById('search-button').addEventListener('click', (e) => {
-    e.preventDefault(); // Prevent any default behavior that might interfere
+    e.preventDefault();
     const query = document.getElementById('search-input').value.trim();
     if (query) {
         if (isValidUrl(query)) {
-            redirectToUrl(query);
+            displayUrlInIframe(query);
         } else {
             currentPage = 1;
             search(query, currentPage, currentType);
+            document.getElementById('website-iframe').style.display = 'none'; // Hide iframe for normal searches
         }
     }
 });
@@ -49,14 +57,15 @@ document.getElementById('search-input').addEventListener('input', async (e) => {
 
 document.getElementById('search-input').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
-        e.preventDefault(); // Prevent form submission or other default behavior
+        e.preventDefault();
         const query = document.getElementById('search-input').value.trim();
         if (query) {
             if (isValidUrl(query)) {
-                redirectToUrl(query);
+                displayUrlInIframe(query);
             } else {
                 currentPage = 1;
                 search(query, currentPage, currentType);
+                document.getElementById('website-iframe').style.display = 'none';
             }
         }
     }
@@ -71,6 +80,7 @@ document.querySelectorAll('.filter-button').forEach(button => {
         if (query) {
             currentPage = 1;
             search(query, currentPage, currentType);
+            document.getElementById('website-iframe').style.display = 'none';
         }
     });
 });
@@ -98,10 +108,11 @@ function displaySuggestions(suggestions) {
                 document.getElementById('search-input').value = suggestion;
                 suggestionsDiv.style.display = 'none';
                 if (isValidUrl(suggestion)) {
-                    redirectToUrl(suggestion);
+                    displayUrlInIframe(suggestion);
                 } else {
                     currentPage = 1;
                     search(suggestion, currentPage, currentType);
+                    document.getElementById('website-iframe').style.display = 'none';
                 }
             });
             suggestionsDiv.appendChild(div);
@@ -222,6 +233,7 @@ function setupPagination(data, query, type) {
             prevButton.addEventListener('click', () => {
                 currentPage--;
                 search(query, currentPage, type);
+                document.getElementById('website-iframe').style.display = 'none';
             });
             paginationDiv.appendChild(prevButton);
         }
@@ -232,6 +244,7 @@ function setupPagination(data, query, type) {
             nextButton.addEventListener('click', () => {
                 currentPage++;
                 search(query, currentPage, type);
+                document.getElementById('website-iframe').style.display = 'none';
             });
             paginationDiv.appendChild(nextButton);
         }
