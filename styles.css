@@ -273,6 +273,15 @@ header {
     cursor: not-allowed;
 }
 
+#website-iframe {
+    width: 100%;
+    height: 600px; /* Adjust height as needed */
+    border: 1px solid #3c4043;
+    border-radius: 8px;
+    margin-top: 20px;
+    background-color: #ffffff; /* Fallback background for iframe */
+}
+
 footer {
     margin-top: auto;
     padding: 20px 0;
